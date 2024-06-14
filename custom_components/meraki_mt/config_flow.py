@@ -8,37 +8,35 @@ from .meraki_mt import MerakiMT
 
 class MerakiMTConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
-    MINOR_VERSION = 1
+    MINOR_VERSION = 2
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
-        if user_input is None:
-            return self.async_show_form(
-                step_id="user",
-                data_schema=vol.Schema({
-                    vol.Required(CONF_API_KEY): str,
-                    vol.Required(CONF_ORG_ID): str,
-                    vol.Optional(CONF_NETWORK_ID): str,
-                })
-            )
-
         errors = {}
-        try:
-            await self._test_connection(user_input)
-        except Exception:
-            errors["base"] = "cannot_connect"
-        if errors:
-            return self.async_show_form(
-                step_id="user",
-                data_schema=vol.Schema({
-                    vol.Required(CONF_API_KEY): str,
-                    vol.Required(CONF_ORG_ID): str,
-                    vol.Optional(CONF_NETWORK_ID): str,
-                }),
-                errors=errors
-            )
+        if user_input is not None:
+            try:
+                await self._test_connection(user_input)
+            except Exception:
+                errors["base"] = "cannot_connect"
+            if not errors:
+                return self.async_create_entry(title="Meraki MT", data=user_input)
 
-        return self.async_create_entry(title="Meraki MT", data=user_input)
+        data_schema = vol.Schema({
+            vol.Required(CONF_API_KEY): str,
+            vol.Required(CONF_ORG_ID): str,
+            vol.Optional(CONF_NETWORK_ID): str,
+        })
+
+        return self.async_show_form(
+            step_id="user",
+            data_schema=data_schema,
+            errors=errors,
+            description_placeholders={
+                "api_key": "Your Meraki API key.",
+                "organization_id": "Your Meraki Organization ID.",
+                "network_id": "Your Meraki Network ID (optional)."
+            }
+        )
 
     async def _test_connection(self, config):
         session = aiohttp_client.async_get_clientsession(self.hass)
