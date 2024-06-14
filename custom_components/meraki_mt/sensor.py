@@ -81,9 +81,7 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def state(self):
-        if self.hass.config.units.is_metric:
-            return self.sensor_data["temperature_celsius"]
-        return self.sensor_data["temperature_fahrenheit"]
+        return self.sensor_data["temperature_celsius"]
 
     @property
     def extra_state_attributes(self):
@@ -95,9 +93,7 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def unit_of_measurement(self):
-        if self.hass.config.units.is_metric:
-            return TEMP_CELSIUS
-        return TEMP_FAHRENHEIT
+        return TEMP_CELSIUS
 
     @property
     def should_poll(self):
