@@ -17,10 +17,22 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     async_add_entities(sensors)
 
-class MerakiMTBatterySensor(SensorEntity):
+class MerakiMTSensorBase(SensorEntity):
     def __init__(self, coordinator, sensor_data):
         self.coordinator = coordinator
         self.sensor_data = sensor_data
+
+    @property
+    def device_info(self):
+        return {
+            "identifiers": {(DOMAIN, self.sensor_data["id"])},
+            "name": f"Meraki Sensor {self.sensor_data['id']}",
+            "manufacturer": "Cisco Meraki",
+        }
+
+class MerakiMTBatterySensor(MerakiMTSensorBase):
+    def __init__(self, coordinator, sensor_data):
+        super().__init__(coordinator, sensor_data)
         self._name = f"{sensor_data['id']} Battery"
         self._unique_id = f"{sensor_data['id']}_battery"
 
@@ -53,10 +65,9 @@ class MerakiMTBatterySensor(SensorEntity):
     async def async_update(self):
         await self.coordinator.async_request_refresh()
 
-class MerakiMTTemperatureSensor(SensorEntity):
+class MerakiMTTemperatureSensor(MerakiMTSensorBase):
     def __init__(self, coordinator, sensor_data):
-        self.coordinator = coordinator
-        self.sensor_data = sensor_data
+        super().__init__(coordinator, sensor_data)
         self._name = f"{sensor_data['id']} Temperature"
         self._unique_id = f"{sensor_data['id']}_temperature"
 
@@ -95,10 +106,9 @@ class MerakiMTTemperatureSensor(SensorEntity):
     async def async_update(self):
         await self.coordinator.async_request_refresh()
 
-class MerakiMTHumiditySensor(SensorEntity):
+class MerakiMTHumiditySensor(MerakiMTSensorBase):
     def __init__(self, coordinator, sensor_data):
-        self.coordinator = coordinator
-        self.sensor_data = sensor_data
+        super().__init__(coordinator, sensor_data)
         self._name = f"{sensor_data['id']} Humidity"
         self._unique_id = f"{sensor_data['id']}_humidity"
 
