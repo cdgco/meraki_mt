@@ -33,7 +33,7 @@ class MerakiMTSensorBase(SensorEntity):
 class MerakiMTBatterySensor(MerakiMTSensorBase):
     def __init__(self, coordinator, sensor_data):
         super().__init__(coordinator, sensor_data)
-        self._name = f"{sensor_data['id']} Battery"
+        self._name = f"MT {sensor_data['id']} Battery"
         self._unique_id = f"{sensor_data['id']}_battery"
 
     @property
@@ -68,7 +68,7 @@ class MerakiMTBatterySensor(MerakiMTSensorBase):
 class MerakiMTTemperatureSensor(MerakiMTSensorBase):
     def __init__(self, coordinator, sensor_data):
         super().__init__(coordinator, sensor_data)
-        self._name = f"{sensor_data['id']} Temperature"
+        self._name = f"MT {sensor_data['id']} Temperature"
         self._unique_id = f"{sensor_data['id']}_temperature"
 
     @property
@@ -81,7 +81,7 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def state(self):
-        if self.sensor_data["temperature_celsius"] is not None:
+        if self.hass.config.units.is_metric:
             return self.sensor_data["temperature_celsius"]
         return self.sensor_data["temperature_fahrenheit"]
 
@@ -95,7 +95,7 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def unit_of_measurement(self):
-        if self.sensor_data["temperature_celsius"] is not None:
+        if self.hass.config.units.is_metric:
             return TEMP_CELSIUS
         return TEMP_FAHRENHEIT
 
@@ -109,7 +109,7 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 class MerakiMTHumiditySensor(MerakiMTSensorBase):
     def __init__(self, coordinator, sensor_data):
         super().__init__(coordinator, sensor_data)
-        self._name = f"{sensor_data['id']} Humidity"
+        self._name = f"MT {sensor_data['id']} Humidity"
         self._unique_id = f"{sensor_data['id']}_humidity"
 
     @property
