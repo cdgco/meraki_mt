@@ -22,21 +22,14 @@ class MerakiMTConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             if not errors:
                 return self.async_create_entry(title="Meraki MT", data=user_input)
 
-        data_schema = vol.Schema({
-            vol.Required(CONF_API_KEY): str,
-            vol.Required(CONF_ORG_ID): str,
-            vol.Optional(CONF_NETWORK_ID): str,
-        })
-
         return self.async_show_form(
             step_id="user",
-            data_schema=data_schema,
+            data_schema=vol.Schema({
+                vol.Required(CONF_API_KEY): str,
+                vol.Required(CONF_ORG_ID): str,
+                vol.Optional(CONF_NETWORK_ID): str,
+            }),
             errors=errors,
-            description_placeholders={
-                "api_key": self.hass.config_entries.async_get_entry_title(),
-                "organization_id": self.hass.config_entries.async_get_entry_title(),
-                "network_id": self.hass.config_entries.async_get_entry_title()
-            }
         )
 
     async def _test_connection(self, config):

@@ -2,6 +2,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from datetime import timedelta
 
 from .const import DOMAIN
 from .meraki_mt import MerakiMT
