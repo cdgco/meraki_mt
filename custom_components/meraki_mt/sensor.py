@@ -1,5 +1,5 @@
-from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE, DEVICE_CLASS_TEMPERATURE, STATE_CLASS_MEASUREMENT, DEVICE_CLASS_BATTERY, DEVICE_CLASS_HUMIDITY
+from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE
 from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import DOMAIN
@@ -61,11 +61,11 @@ class MerakiMTBatterySensor(MerakiMTSensorBase):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_BATTERY
+        return SensorDeviceClass.BATTERY
 
     @property
     def state_class(self):
-        return STATE_CLASS_MEASUREMENT
+        return SensorStateClass.MEASUREMENT
 
     @property
     def should_poll(self):
@@ -110,11 +110,11 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_TEMPERATURE
+        return SensorDeviceClass.TEMPERATURE
 
     @property
     def state_class(self):
-        return STATE_CLASS_MEASUREMENT
+        return SensorStateClass.MEASUREMENT
 
     @property
     def should_poll(self):
@@ -153,11 +153,11 @@ class MerakiMTHumiditySensor(MerakiMTSensorBase):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_HUMIDITY
+        return SensorDeviceClass.HUMIDITY
 
     @property
     def state_class(self):
-        return STATE_CLASS_MEASUREMENT
+        return SensorStateClass.MEASUREMENT
 
     @property
     def should_poll(self):
