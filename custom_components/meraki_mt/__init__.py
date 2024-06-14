@@ -3,10 +3,11 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .const import DOMAIN
+from .meraki_mt import MerakiMT
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
-    coordinator = MerakiSensorCoordinator(hass, entry.data)
+    coordinator = MerakiMTCoordinator(hass, entry.data)
     await coordinator.async_config_entry_first_refresh()
     hass.data[DOMAIN][entry.entry_id] = coordinator
     hass.config_entries.async_setup_platforms(entry, ["sensor"])
@@ -17,7 +18,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN].pop(entry.entry_id)
     return True
 
-class MerakiSensorCoordinator(DataUpdateCoordinator):
+class MerakiMTCoordinator(DataUpdateCoordinator):
     def __init__(self, hass, config):
         super().__init__(
             hass,
@@ -25,7 +26,7 @@ class MerakiSensorCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=timedelta(minutes=5),
         )
-        self.api = MerakiAPI(config)
+        self.api = MerakiMT(config)
 
     async def _async_update_data(self):
         return await self.api.get_latest_readings()

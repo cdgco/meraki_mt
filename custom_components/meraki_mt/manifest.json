@@ -1,7 +1,7 @@
 {
   "domain": "meraki_mt",
   "name": "Meraki MT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "documentation": "https://github.com/cdgco/meraki_mt",
   "requirements": [],
   "dependencies": [],

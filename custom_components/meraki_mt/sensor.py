@@ -8,11 +8,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     sensors = []
 
     for sensor_data in coordinator.data:
-        sensors.append(MerakiSensor(coordinator, sensor_data))
+        sensors.append(MerakiMTSensor(coordinator, sensor_data))
 
     async_add_entities(sensors)
 
-class MerakiSensor(SensorEntity):
+class MerakiMTSensor(SensorEntity):
     def __init__(self, coordinator, sensor_data):
         self.coordinator = coordinator
         self.sensor_data = sensor_data

@@ -1,6 +1,6 @@
 import aiohttp
 
-class MerakiAPI:
+class MerakiMT:
     def __init__(self, config, session):
         self.api_key = config["api_key"]
         self.org_id = config["organization_id"]

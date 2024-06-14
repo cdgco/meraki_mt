@@ -4,10 +4,11 @@ from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client
 
 from .const import DOMAIN, CONF_API_KEY, CONF_ORG_ID, CONF_NETWORK_ID
-from .meraki_api import MerakiAPI
+from .meraki_mt import MerakiMT
 
-class MerakiSensorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class MerakiMTConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
+    MINOR_VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
@@ -37,19 +38,19 @@ class MerakiSensorConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors=errors
             )
 
-        return self.async_create_entry(title="Meraki Sensor", data=user_input)
+        return self.async_create_entry(title="Meraki MT", data=user_input)
 
     async def _test_connection(self, config):
         session = aiohttp_client.async_get_clientsession(self.hass)
-        api = MerakiAPI(config, session)
+        api = MerakiMT(config, session)
         await api.get_latest_readings()
 
     @staticmethod
     @callback
     def async_get_options_flow(config_entry):
-        return MerakiSensorOptionsFlowHandler(config_entry)
+        return MerakiMTOptionsFlowHandler(config_entry)
 
-class MerakiSensorOptionsFlowHandler(config_entries.OptionsFlow):
+class MerakiMTOptionsFlowHandler(config_entries.OptionsFlow):
     def __init__(self, config_entry):
         self.config_entry = config_entry
 
