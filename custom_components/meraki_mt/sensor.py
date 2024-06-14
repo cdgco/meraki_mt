@@ -1,6 +1,6 @@
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE, METRIC_SYSTEM
-
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE
+from homeassistant.util.unit_system import METRIC_SYSTEM
 
 from .const import DOMAIN
 
