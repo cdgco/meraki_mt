@@ -1,0 +1,18 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Meraki MT Configuration",
+        "description": "Please enter your Meraki API key, Organization ID, and optionally Network ID.",
+        "data": {
+          "api_key": "API Key",
+          "organization_id": "Organization ID",
+          "network_id": "Network ID (optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect, please check your credentials."
+    }
+  }
+}

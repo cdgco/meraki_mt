@@ -2,13 +2,14 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.helpers import aiohttp_client
+from homeassistant.helpers.selector import selector
 
 from .const import DOMAIN, CONF_API_KEY, CONF_ORG_ID, CONF_NETWORK_ID
 from .meraki_mt import MerakiMT
 
 class MerakiMTConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
-    MINOR_VERSION = 2
+    MINOR_VERSION = 3
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     async def async_step_user(self, user_input=None):
@@ -32,9 +33,9 @@ class MerakiMTConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=data_schema,
             errors=errors,
             description_placeholders={
-                "api_key": "Your Meraki API key.",
-                "organization_id": "Your Meraki Organization ID.",
-                "network_id": "Your Meraki Network ID (optional)."
+                "api_key": self.hass.config_entries.async_get_entry_title(),
+                "organization_id": self.hass.config_entries.async_get_entry_title(),
+                "network_id": self.hass.config_entries.async_get_entry_title()
             }
         )
 
