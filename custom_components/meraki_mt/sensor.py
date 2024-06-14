@@ -1,5 +1,5 @@
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import TEMP_CELSIUS, PERCENTAGE
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE
 
 from .const import DOMAIN
 
@@ -8,16 +8,21 @@ async def async_setup_entry(hass, entry, async_add_entities):
     sensors = []
 
     for sensor_data in coordinator.data:
-        sensors.append(MerakiMTSensor(coordinator, sensor_data))
+        if sensor_data["battery"] is not None:
+            sensors.append(MerakiMTBatterySensor(coordinator, sensor_data))
+        if sensor_data["temperature_celsius"] is not None or sensor_data["temperature_fahrenheit"] is not None:
+            sensors.append(MerakiMTTemperatureSensor(coordinator, sensor_data))
+        if sensor_data["humidity"] is not None:
+            sensors.append(MerakiMTHumiditySensor(coordinator, sensor_data))
 
     async_add_entities(sensors)
 
-class MerakiMTSensor(SensorEntity):
+class MerakiMTBatterySensor(SensorEntity):
     def __init__(self, coordinator, sensor_data):
         self.coordinator = coordinator
         self.sensor_data = sensor_data
-        self._name = sensor_data["id"]
-        self._unique_id = sensor_data["id"]
+        self._name = f"{sensor_data['id']} Battery"
+        self._unique_id = f"{sensor_data['id']}_battery"
 
     @property
     def name(self):
@@ -29,28 +34,95 @@ class MerakiMTSensor(SensorEntity):
 
     @property
     def state(self):
-        return {
-            "battery": self.sensor_data["battery"],
-            "temperature": self.sensor_data["temperature"],
-            "humidity": self.sensor_data["humidity"]
-        }
+        return self.sensor_data["battery"]
 
     @property
     def extra_state_attributes(self):
         return {
             "network_name": self.sensor_data["network_name"],
-            "battery": self.sensor_data["battery"],
-            "temperature": self.sensor_data["temperature"],
-            "humidity": self.sensor_data["humidity"],
         }
 
     @property
     def unit_of_measurement(self):
-        if self.sensor_data["temperature"] is not None:
+        return PERCENTAGE
+
+    @property
+    def should_poll(self):
+        return True
+
+    async def async_update(self):
+        await self.coordinator.async_request_refresh()
+
+class MerakiMTTemperatureSensor(SensorEntity):
+    def __init__(self, coordinator, sensor_data):
+        self.coordinator = coordinator
+        self.sensor_data = sensor_data
+        self._name = f"{sensor_data['id']} Temperature"
+        self._unique_id = f"{sensor_data['id']}_temperature"
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def unique_id(self):
+        return self._unique_id
+
+    @property
+    def state(self):
+        if self.sensor_data["temperature_celsius"] is not None:
+            return self.sensor_data["temperature_celsius"]
+        return self.sensor_data["temperature_fahrenheit"]
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "network_name": self.sensor_data["network_name"],
+            "temperature_celsius": self.sensor_data["temperature_celsius"],
+            "temperature_fahrenheit": self.sensor_data["temperature_fahrenheit"],
+        }
+
+    @property
+    def unit_of_measurement(self):
+        if self.sensor_data["temperature_celsius"] is not None:
             return TEMP_CELSIUS
-        elif self.sensor_data["humidity"] is not None:
-            return PERCENTAGE
-        return None
+        return TEMP_FAHRENHEIT
+
+    @property
+    def should_poll(self):
+        return True
+
+    async def async_update(self):
+        await self.coordinator.async_request_refresh()
+
+class MerakiMTHumiditySensor(SensorEntity):
+    def __init__(self, coordinator, sensor_data):
+        self.coordinator = coordinator
+        self.sensor_data = sensor_data
+        self._name = f"{sensor_data['id']} Humidity"
+        self._unique_id = f"{sensor_data['id']}_humidity"
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def unique_id(self):
+        return self._unique_id
+
+    @property
+    def state(self):
+        return self.sensor_data["humidity"]
+
+    @property
+    def extra_state_attributes(self):
+        return {
+            "network_name": self.sensor_data["network_name"],
+        }
+
+    @property
+    def unit_of_measurement(self):
+        return PERCENTAGE
 
     @property
     def should_poll(self):

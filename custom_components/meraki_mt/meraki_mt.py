@@ -29,7 +29,8 @@ class MerakiMT:
                 "id": sensor["serial"],
                 "network_name": sensor["network"]["name"],
                 "battery": None,
-                "temperature": None,
+                "temperature_celsius": None,
+                "temperature_fahrenheit": None,
                 "humidity": None
             }
             for reading in sensor["readings"]:
@@ -38,7 +39,10 @@ class MerakiMT:
                 elif reading["metric"] == "humidity":
                     sensor_data["humidity"] = reading["humidity"]["relativePercentage"]
                 elif reading["metric"] == "temperature":
-                    sensor_data["temperature"] = reading["temperature"]["celsius"]
+                    if reading["temperature"]["fahrenheit"]:
+                        sensor_data["temperature_fahrenheit"] = reading["temperature"]["fahrenheit"]
+                    if reading["temperature"]["celsius"]:
+                        sensor_data["temperature_celsius"] = reading["temperature"]["celsius"]
 
             sensors.append(sensor_data)
         return sensors
