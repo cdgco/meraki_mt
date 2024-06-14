@@ -1,5 +1,6 @@
 from homeassistant.components.sensor import SensorEntity
-from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE
+from homeassistant.const import TEMP_CELSIUS, TEMP_FAHRENHEIT, PERCENTAGE, METRIC_SYSTEM
+
 
 from .const import DOMAIN
 
@@ -81,7 +82,9 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def state(self):
-        return self.sensor_data["temperature_celsius"]
+        if self.hass.config.units == METRIC_SYSTEM:
+            return self.sensor_data["temperature_celsius"]
+        return self.sensor_data["temperature_fahrenheit"]
 
     @property
     def extra_state_attributes(self):
@@ -93,7 +96,9 @@ class MerakiMTTemperatureSensor(MerakiMTSensorBase):
 
     @property
     def unit_of_measurement(self):
-        return TEMP_CELSIUS
+        if self.hass.config.units == METRIC_SYSTEM:
+            return TEMP_CELSIUS
+        return TEMP_FAHRENHEIT
 
     @property
     def should_poll(self):
