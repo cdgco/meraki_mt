@@ -2,6 +2,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers import aiohttp_client
 from datetime import timedelta
 
 from .const import DOMAIN
@@ -30,7 +31,8 @@ class MerakiMTCoordinator(DataUpdateCoordinator):
             name=DOMAIN,
             update_interval=timedelta(minutes=5),
         )
-        self.api = MerakiMT(config)
+        session = aiohttp_client.async_get_clientsession(hass)
+        self.api = MerakiMT(config, session)
 
     async def _async_update_data(self):
         return await self.api.get_latest_readings()
